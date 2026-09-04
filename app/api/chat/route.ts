@@ -2,6 +2,9 @@ import { SYSTEM_PROMPT, TWIN_MODEL } from "@/lib/twin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Cap how long the streaming function may run. Without this the platform
+// default applies, which can kill a slow reply mid-stream with no explanation.
+export const maxDuration = 30;
 
 const ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
 
@@ -12,6 +15,7 @@ const MAX_TOTAL_CHARS = 12_000;
 const MAX_TOKENS = 800; // must cover reasoning + answer for gpt-oss
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 12;
+const UPSTREAM_TIMEOUT_MS = 25_000; // < maxDuration, see the export above
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -109,7 +113,9 @@ export async function POST(req: Request) {
         // answer itself is not truncated by max_tokens.
         reasoning: { effort: "low" },
       }),
-      signal: AbortSignal.timeout(60_000),
+      // Must sit inside `maxDuration` so a slow provider surfaces as a clean
+      // 502 rather than the platform killing the function mid-stream.
+      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     });
   } catch (error) {
     console.error("OpenRouter fetch failed", error);

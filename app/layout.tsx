@@ -26,7 +26,12 @@ const instrument = Instrument_Serif({
 const description = `${profile.role} (${profile.stackLine}). ${profile.intro}`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3000"),
+  // Absolute URLs (Open Graph, canonical, Twitter card) are built from this.
+  // Set NEXT_PUBLIC_SITE_URL in the deployment environment; localhost is only
+  // the local-development fallback.
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ),
   title: {
     default: `${profile.name} — ${profile.role}`,
     template: `%s — ${profile.name}`,
