@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.env
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+.env.example
+review.md
+# Source CV — kept local, not published to the public repo
+linkedin.pdf

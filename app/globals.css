@@ -1,0 +1,375 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DESIGN TOKENS — "enterprise meets edgy"
+   Near-black canvas, bone type, one acid signal colour.
+   ============================================================ */
+@theme {
+  --color-ink: #07080a;
+  --color-ink-2: #0b0d11;
+  --color-ink-3: #111419;
+  --color-bone: #edeef2;
+  --color-muted: #8b909c;
+  --color-faint: #565b66;
+  --color-acid: #c8f751;
+  --color-acid-dim: #8fae38;
+  --color-cobalt: #5b8cff;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-2: rgba(255, 255, 255, 0.14);
+
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo,
+    monospace;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+    min-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-acid);
+    color: var(--color-ink);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #23262d;
+    border: 3px solid var(--color-ink);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #33373f;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-acid);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+@utility container-x {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 84rem;
+  padding-inline: 1.5rem;
+
+  @media (min-width: 1024px) {
+    padding-inline: 3rem;
+  }
+}
+
+/* Monospace micro-label that heads every block */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+
+/* ============================================================
+   BACKGROUND SYSTEM
+   ============================================================ */
+
+/* Hairline engineering grid */
+.grid-field {
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+/* Film grain — fixed above everything, never intercepts pointer events */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -150%;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("/grain.svg");
+  animation: grain 7s steps(6) infinite;
+}
+
+@keyframes grain {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  16% {
+    transform: translate(-2%, -3%);
+  }
+  33% {
+    transform: translate(-4%, 2%);
+  }
+  50% {
+    transform: translate(2%, -4%);
+  }
+  66% {
+    transform: translate(-1%, 3%);
+  }
+  83% {
+    transform: translate(3%, 1%);
+  }
+}
+
+/* ============================================================
+   SCROLL REVEAL
+   Gated behind `.js` on <html> (set by a head script before paint),
+   so with JavaScript disabled every section renders plainly visible.
+   ============================================================ */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.js [data-reveal="in"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Rule that draws itself in */
+.js [data-rule] {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.1s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js [data-rule="in"] {
+  transform: scaleX(1);
+}
+
+/* ============================================================
+   MOTION
+   ============================================================ */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 46s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
+
+@keyframes fade-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.32;
+  }
+}
+
+@keyframes ping-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  75%,
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
+@keyframes sweep {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.text-sweep {
+  background: linear-gradient(
+    100deg,
+    var(--color-bone) 38%,
+    var(--color-acid) 50%,
+    var(--color-bone) 62%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sweep 7s linear infinite;
+}
+
+/* ============================================================
+   COMPONENT PRIMITIVES
+   ============================================================ */
+
+/* Link whose underline wipes in from the left */
+.link-wipe {
+  position: relative;
+  display: inline-block;
+}
+.link-wipe::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s var(--ease-out-expo);
+}
+.link-wipe:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Card that catches an acid edge-light under the cursor */
+.edge-card {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.035),
+    rgba(255, 255, 255, 0.012)
+  );
+  border: 1px solid var(--color-line);
+  transition:
+    border-color 0.5s var(--ease-out-expo),
+    transform 0.5s var(--ease-out-expo);
+}
+.edge-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.55s var(--ease-out-expo);
+  background: radial-gradient(
+    360px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(200, 247, 81, 0.13),
+    transparent 68%
+  );
+}
+.edge-card:hover {
+  border-color: var(--color-line-2);
+  transform: translateY(-3px);
+}
+.edge-card:hover::before {
+  opacity: 1;
+}
+
+/* Blueprint corner ticks.
+   The element is a full-bleed overlay drawn purely for decoration, so it must
+   never intercept pointer events — otherwise it swallows clicks on anything
+   interactive underneath it (inputs, buttons, links). */
+.ticks {
+  pointer-events: none;
+}
+
+.ticks::before,
+.ticks::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-color: var(--color-line-2);
+  transition: border-color 0.5s var(--ease-out-expo);
+}
+.ticks::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.ticks::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+.group:hover .ticks::before,
+.group:hover .ticks::after {
+  border-color: var(--color-acid);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js [data-reveal],
+  .js [data-rule] {
+    opacity: 1;
+    transform: none;
+  }
+}
