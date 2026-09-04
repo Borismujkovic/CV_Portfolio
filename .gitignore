@@ -10,3 +10,6 @@ next-env.d.ts
 review.md
 # Source CV — kept local, not published to the public repo
 linkedin.pdf
+
+.vercel
+.env*
